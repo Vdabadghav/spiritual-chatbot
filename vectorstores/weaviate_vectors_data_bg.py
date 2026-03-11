@@ -44,7 +44,6 @@ vectors = model.encode(
     texts,
     batch_size=64,
     show_progress_bar=True,
-    normalize_embeddings=True
 )
 
 

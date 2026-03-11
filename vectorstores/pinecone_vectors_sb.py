@@ -31,6 +31,10 @@ df = df.fillna("")
 model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 
 texts = (
+    "Canto " + df["Canto"].astype(str) + " " +
+    "Chapter " + df["Chapter"].astype(str) + " " +
+    df["Text"].astype(str).str.strip() + " " +
+    df["Devanagari Script"].astype(str).str.strip() + " " +
     df["Translation"].astype(str).str.strip() + " " +
     df["Purport"].astype(str).str.strip()
 ).tolist()
