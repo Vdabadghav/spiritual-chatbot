@@ -8,7 +8,6 @@ INDEX_NAME = "bhagavad-gita"
 
 pc = Pinecone(api_key=PINECONE_API_KEY)
 
-
 if INDEX_NAME not in [index["name"] for index in pc.list_indexes()]:
     pc.create_index(
         name=INDEX_NAME,
@@ -22,19 +21,23 @@ if INDEX_NAME not in [index["name"] for index in pc.list_indexes()]:
 
 index = pc.Index(INDEX_NAME)
 
-df = pd.read_csv("../data/raw/Bhagwadgitacsv.csv")
+df = pd.read_csv(r"data\raw\Bhagwadgitacsv.csv")
 
 print("Columns found:", df.columns)
 print("Total verses loaded:", len(df))
 
-df = df.fillna("") 
+df = df.fillna("")
 
 model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 
 texts = (
+    "Chapter " + df["Chapter"].astype(str) + " " +
+    df["Chapter Description"].astype(str).str.strip() + " " +
+    df["Devanagari Script"].astype(str).str.strip() + " " +
     df["Translation"].astype(str).str.strip() + " " +
     df["Purport"].astype(str).str.strip()
 ).tolist()
+
 
 embeddings = model.encode(texts, show_progress_bar=True)
 
@@ -47,6 +50,7 @@ for i, embedding in enumerate(embeddings):
             embedding.tolist(),
             {
                 "chapter": int(df.iloc[i]["Chapter"]),
+                "chapter_description": df.iloc[i]["Chapter Description"],
                 "sanskrit": df.iloc[i]["Devanagari Script"],
                 "translation": df.iloc[i]["Translation"],
                 "purport": df.iloc[i]["Purport"]
@@ -61,7 +65,7 @@ for i in range(0, len(vectors), batch_size):
     index.upsert(vectors=batch)
     print(f"Uploaded batch {i//batch_size + 1}")
 
-print("All 700 verses uploaded successfully!")
+print("All verses uploaded successfully")
 
 
 

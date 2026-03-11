@@ -8,12 +8,14 @@ model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 client = weaviate.connect_to_local()
 print("Connected:", client.is_ready())
 
+# Create collection if not exists
 if not client.collections.exists("BhagavadGita"):
     client.collections.create(
         name="BhagavadGita",
         vectorizer_config=None,
         properties=[
             wvc.config.Property(name="chapter", data_type=wvc.config.DataType.INT),
+            wvc.config.Property(name="chapter_description", data_type=wvc.config.DataType.TEXT),
             wvc.config.Property(name="devanagari", data_type=wvc.config.DataType.TEXT),
             wvc.config.Property(name="translation", data_type=wvc.config.DataType.TEXT),
             wvc.config.Property(name="purport", data_type=wvc.config.DataType.TEXT),
@@ -22,28 +24,46 @@ if not client.collections.exists("BhagavadGita"):
 
 collection = client.collections.get("BhagavadGita")
 
-df = pd.read_csv(r"D:\work\spiritual-chatbot\data\raw\Bhagwadgitacsv.csv")
-
+df = pd.read_csv(r"data\raw\Bhagwadgitacsv.csv")
 df = df.fillna("")
 
-print(df.columns)
+print("Columns:", df.columns)
+print("Total verses:", len(df))
 
-for _, row in df.iterrows():
+texts = (
+    "Chapter " + df["Chapter"].astype(str) + " " +
+    df["Chapter Description"].astype(str).str.strip() + " " +
+    df["Devanagari Script"].astype(str).str.strip() + " " +
+    df["Translation"].astype(str).str.strip() + " " +
+    df["Purport"].astype(str).str.strip()
+).tolist()
 
-    text = f"{row['Devanagari Script']} {row['Translation']} {row['Purport']}"
 
-    vector = model.encode(text).tolist()
+print("Encoding embeddings")
+vectors = model.encode(
+    texts,
+    batch_size=64,
+    show_progress_bar=True,
+    normalize_embeddings=True
+)
 
-    collection.data.insert(
-        properties={
-            "chapter": int(row["Chapter"]),
-            "devanagari": row["Devanagari Script"],
-            "translation": row["Translation"],
-            "purport": row["Purport"]
-        },
-        vector=vector
-    )
 
-print("Bhagavad Gita data vectorized successfully!")
+print("Uploading to Weaviate")
+
+with collection.batch.fixed_size(batch_size=64) as batch:
+    for i, row in df.iterrows():
+
+        batch.add_object(
+            properties={
+                "chapter": int(row["Chapter"]),
+                "chapter_description": row["Chapter Description"],
+                "devanagari": row["Devanagari Script"],
+                "translation": row["Translation"],
+                "purport": row["Purport"]
+            },
+            vector=vectors[i].tolist()
+        )
+
+print("Bhagavad Gita data vectorized successfully")
 
 client.close()

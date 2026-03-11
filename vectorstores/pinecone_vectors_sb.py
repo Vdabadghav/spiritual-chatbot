@@ -21,7 +21,7 @@ if INDEX_NAME not in [index["name"] for index in pc.list_indexes()]:
 
 index = pc.Index(INDEX_NAME)
 
-df = pd.read_csv(r"D:\work\spiritual-chatbot\data\raw\Srimadbhagwatamcsv.csv")
+df = pd.read_csv(r"data\raw\Srimadbhagwatamcsv.csv")
 
 print("Columns found:", df.columns)
 print("Total verses loaded:", len(df))

@@ -97,7 +97,7 @@ with open("bhagavad_gita.csv", "w", newline="", encoding="utf-8") as file:
                     data["translation"],
                     data["purport"]
                 ])
-                print(f"✔ Saved {chapter_number}.{v}")
+                print(f"Saved {chapter_number}.{v}")
 
             time.sleep(0.7)
 

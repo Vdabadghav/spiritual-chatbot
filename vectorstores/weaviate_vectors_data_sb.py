@@ -25,7 +25,7 @@ if not client.collections.exists(collection_name):
 
 collection = client.collections.get(collection_name)
 
-df = pd.read_csv(r"D:\work\spiritual-chatbot\data\raw\Srimadbhagwatamcsv.csv")
+df = pd.read_csv(r"data\raw\Srimadbhagwatamcsv.csv")
 df = df.fillna("")
 
 print("Total verses:", len(df))
@@ -66,6 +66,6 @@ with collection.batch.fixed_size(batch_size=100) as batch:
             vector=vectors[i].tolist(),
         )
 
-print("Srimad Bhagavatam successfully vectorized!")
+print("Srimad Bhagavatam successfully vectorized")
 
 client.close()

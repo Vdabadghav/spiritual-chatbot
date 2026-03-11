@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-df = pd.read_csv(r"D:\work\spiritual-chatbot\data\raw\Bhagwadgitacsv.csv")
+df = pd.read_csv(r"data\raw\Bhagwadgitacsv.csv")
 
 print("Columns found:", df.columns)
 print("Total verses loaded:", len(df))
