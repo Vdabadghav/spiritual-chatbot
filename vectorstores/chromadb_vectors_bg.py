@@ -24,7 +24,7 @@ print("Embedding model loaded successfully")
 
 metadatas = [
     {
-        "chapter": str(row["Chapter"]),
+        "chapter": int(row["Chapter"]),
         "chapter_description": row["Chapter Description"],
         "devanagari": row["Devanagari Script"],
         "translation": row["Translation"],
