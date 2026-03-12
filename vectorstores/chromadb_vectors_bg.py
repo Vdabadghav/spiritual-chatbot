@@ -1,3 +1,4 @@
+from importlib_metadata import metadata
 import pandas as pd
 import numpy as np
 import chromadb
@@ -22,6 +23,17 @@ texts = (
 
 print("Embedding model loaded successfully")
 
+metadatas = [
+    {
+        "chapter": str(row["Chapter"]),
+        "chapter_description": row["Chapter Description"],
+        "devanagari": row["Devanagari Script"],
+        "translation": row["Translation"],
+        "purport": row["Purport"]
+    }
+    for _, row in df.iterrows()
+]
+
 embeddings = model.encode(
     texts,
     batch_size=32,
@@ -36,10 +48,19 @@ client = chromadb.PersistentClient(path="./chroma_db")
 
 collection = client.get_or_create_collection(name="bhagavad_gita")
 
-collection.add(
-    embeddings=embeddings.tolist(),
-    documents=texts,
-    ids=[str(i) for i in range(len(texts))]
-)
+batch_size = 100
+for i in range(0, len(texts), batch_size):
+    batch_texts = texts[i:i+batch_size]
+    batch_embeddings = embeddings[i:i+batch_size]
+    batch_metadatas = metadatas[i:i+batch_size]
+
+    collection.add(
+        embeddings=batch_embeddings.tolist(),
+        documents=batch_texts,
+        metadatas=batch_metadatas,
+        ids=[str(j) for j in range(i, i+len(batch_texts))]
+    )
+
+    print(f"Inserted batch {i} to {i+len(batch_texts)}")
 
 print("Embeddings stored in ChromaDB successfully")

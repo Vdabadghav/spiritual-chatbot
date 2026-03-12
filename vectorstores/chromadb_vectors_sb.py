@@ -8,6 +8,8 @@ df = pd.read_csv(r"data\raw\Srimadbhagwatamcsv.csv")
 print("Columns found:", df.columns)
 print("Total verses loaded:", len(df))
 
+model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+
 df = df.fillna("")
 
 texts = (
@@ -19,13 +21,23 @@ texts = (
     df["Purport"].astype(str).str.strip()
 ).tolist()
 
-model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
-
 print("Embedding model loaded successfully")
+
+metadatas = [
+    {
+        "canto": str(row["Canto"]),
+        "chapter": str(row["Chapter"]),
+        "text": row["Text"],
+        "devanagari": row["Devanagari Script"],
+        "translation": row["Translation"],
+        "purport": row["Purport"]
+    }
+    for _, row in df.iterrows()
+]
 
 embeddings = model.encode(
     texts,
-    batch_size=64,
+    batch_size=32,
     show_progress_bar=True
 )
 
@@ -37,15 +49,21 @@ client = chromadb.PersistentClient(path="./chroma_db")
 
 collection = client.get_or_create_collection(name="srimad_bhagavatam")
 
-ids = [str(i) for i in range(len(texts))]
+batch_size = 1000
 
-max_batch = 5000
+for i in range(0, len(texts), batch_size):
 
-for i in range(0, len(ids), max_batch):
+    batch_texts = texts[i:i+batch_size]
+    batch_embeddings = embeddings[i:i+batch_size]
+    batch_metadatas = metadatas[i:i+batch_size]
+
     collection.add(
-        ids=ids[i:i+max_batch],
-        embeddings=embeddings[i:i+max_batch].tolist(),
-        documents=texts[i:i+max_batch]
+        embeddings=batch_embeddings.tolist(),
+        documents=batch_texts,
+        metadatas=batch_metadatas,
+        ids=[str(j) for j in range(i, i+len(batch_texts))]
     )
 
-print("Srimad Bhagavatam successfully stored in ChromaDB")
+    print(f"Inserted batch {i} to {i+len(batch_texts)}")
+
+print("Srimad Bhagavatam embeddings stored in ChromaDB successfully")
