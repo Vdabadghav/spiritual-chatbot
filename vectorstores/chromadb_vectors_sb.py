@@ -1,6 +1,6 @@
-import chromadb
 import pandas as pd
 import numpy as np
+import chromadb
 from sentence_transformers import SentenceTransformer
 
 df = pd.read_csv(r"data\raw\Srimadbhagwatamcsv.csv")
@@ -25,7 +25,7 @@ print("Embedding model loaded successfully")
 
 embeddings = model.encode(
     texts,
-    batch_size=32,
+    batch_size=64,
     show_progress_bar=True
 )
 
@@ -33,11 +33,19 @@ embeddings = np.array(embeddings)
 
 print("Embedding shape:", embeddings.shape)
 
-np.save("srimad_bhagavatam_embeddings.npy", embeddings)
+client = chromadb.PersistentClient(path="./chroma_db")
 
-print("Embeddings saved successfully")
+collection = client.get_or_create_collection(name="srimad_bhagavatam")
 
-df["embedding"] = embeddings.tolist()
-df.to_csv("srimad_bhagavatam_vectorized.csv", index=False)
+ids = [str(i) for i in range(len(texts))]
 
-print("Vectorized dataset saved")
+max_batch = 5000
+
+for i in range(0, len(ids), max_batch):
+    collection.add(
+        ids=ids[i:i+max_batch],
+        embeddings=embeddings[i:i+max_batch].tolist(),
+        documents=texts[i:i+max_batch]
+    )
+
+print("Srimad Bhagavatam successfully stored in ChromaDB")
