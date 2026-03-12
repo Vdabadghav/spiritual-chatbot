@@ -1,3 +1,4 @@
+import chromadb
 import pandas as pd
 import numpy as np
 from sentence_transformers import SentenceTransformer
@@ -9,22 +10,21 @@ print("Total verses loaded:", len(df))
 
 df = df.fillna("")
 
-df["combined_text"] = (
-    "Canto: " + df["Canto"].astype(str) + "\n"
-    + "Chapter: " + df["Chapter"].astype(str) + "\n"
-    + "Chapter Description: " + df["Chapter Description"].astype(str) + "\n"
-    + "Sanskrit Verse: " + df["Devanagari Script"].astype(str) + "\n"
-    + "Text: " + df["Text"].astype(str) + "\n"
-    + "Translation: " + df["Translation"].astype(str) + "\n"
-    + "Purport: " + df["Purport"].astype(str)
-)
+texts = (
+    "Canto " + df["Canto"].astype(str) + " " +
+    "Chapter " + df["Chapter"].astype(str) + " " +
+    df["Text"].astype(str).str.strip() + " " +
+    df["Devanagari Script"].astype(str).str.strip() + " " +
+    df["Translation"].astype(str).str.strip() + " " +
+    df["Purport"].astype(str).str.strip()
+).tolist()
 
-model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 
 print("Embedding model loaded successfully")
 
 embeddings = model.encode(
-    df["combined_text"].tolist(),
+    texts,
     batch_size=32,
     show_progress_bar=True
 )

@@ -51,7 +51,7 @@ for i, embedding in enumerate(embeddings):
             {
                 "chapter": int(df.iloc[i]["Chapter"]),
                 "chapter_description": df.iloc[i]["Chapter Description"],
-                "sanskrit": df.iloc[i]["Devanagari Script"],
+                "devanagari": df.iloc[i]["Devanagari Script"],
                 "translation": df.iloc[i]["Translation"],
                 "purport": df.iloc[i]["Purport"]
             }

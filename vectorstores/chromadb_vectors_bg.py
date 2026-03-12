@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import chromadb
 from sentence_transformers import SentenceTransformer
 
 df = pd.read_csv(r"data\raw\Bhagwadgitacsv.csv")
@@ -7,22 +8,22 @@ df = pd.read_csv(r"data\raw\Bhagwadgitacsv.csv")
 print("Columns found:", df.columns)
 print("Total verses loaded:", len(df))
 
+model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+
 df = df.fillna("")
 
-df["combined_text"] = (
-    "Chapter: " + df["Chapter"].astype(str) + "\n"
-    + "Chapter Description: " + df["Chapter Description"].astype(str) + "\n"
-    + "Sanskrit Verse: " + df["Devanagari Script"].astype(str) + "\n"
-    + "Translation: " + df["Translation"].astype(str) + "\n"
-    + "Purport: " + df["Purport"].astype(str)
-)
-
-model = SentenceTransformer("sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2")
+texts = (
+    "Chapter " + df["Chapter"].astype(str) + " " +
+    df["Chapter Description"].astype(str).str.strip() + " " +
+    df["Devanagari Script"].astype(str).str.strip() + " " +
+    df["Translation"].astype(str).str.strip() + " " +
+    df["Purport"].astype(str).str.strip()
+).tolist()
 
 print("Embedding model loaded successfully")
 
 embeddings = model.encode(
-    df["combined_text"].tolist(),
+    texts,
     batch_size=32,
     show_progress_bar=True
 )
@@ -31,6 +32,14 @@ embeddings = np.array(embeddings)
 
 print("Embedding shape:", embeddings.shape)
 
-np.save("bhagavad_gita_embeddings.npy", embeddings)
+client = chromadb.PersistentClient(path="./chroma_db")
 
-print("Embeddings saved successfully")
+collection = client.get_or_create_collection(name="bhagavad_gita")
+
+collection.add(
+    embeddings=embeddings.tolist(),
+    documents=texts,
+    ids=[str(i) for i in range(len(texts))]
+)
+
+print("Embeddings stored in ChromaDB successfully")
