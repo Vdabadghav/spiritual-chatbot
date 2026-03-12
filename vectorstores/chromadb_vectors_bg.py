@@ -1,4 +1,3 @@
-from importlib_metadata import metadata
 import pandas as pd
 import numpy as np
 import chromadb
