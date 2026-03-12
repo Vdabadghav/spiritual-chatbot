@@ -5,8 +5,6 @@ import re
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://vedabase.io"
-START_URL = f"{BASE_URL}/en/library/bg/"
-
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
 }
