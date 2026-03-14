@@ -1,8 +1,9 @@
 import chromadb
 from sentence_transformers import SentenceTransformer
+
 model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 
-client = chromadb.PersistentClient(path="chroma_db")
+client = chromadb.PersistentClient(path="./chroma_db")
 
 collection = client.get_collection(name="bhagavad_gita")
 

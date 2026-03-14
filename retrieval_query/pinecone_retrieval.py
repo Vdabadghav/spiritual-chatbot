@@ -9,7 +9,7 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 index = pc.Index(INDEX_NAME)
 
 model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
-query = input("What does krishna says about soul")
+query = input("How can one attain liberation (moksha)?")
 
 query_embedding = model.encode(query).tolist()
 
@@ -28,5 +28,4 @@ for match in results["matches"]:
     print("Devanagari:", meta["devanagari"])
     print("Translation:", meta["translation"])
     print("Purport:", meta["purport"])
-    print("Score:", match["score"])
     print("-" * 10)
