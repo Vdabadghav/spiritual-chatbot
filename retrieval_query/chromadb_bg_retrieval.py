@@ -13,13 +13,19 @@ query_embedding = model.encode(query).tolist()
 
 results = collection.query(
     query_embeddings=[query_embedding],
-    n_results=5
+    n_results=5,
+    include=["metadatas", "documents","distances"]
 )
 
-print("\nTop Results:\n")
-
 for i in range(len(results["documents"][0])):
-    print("Result", i+1)
-    print("Text:", results["documents"][0][i])
-    print("Metadata:", results["metadatas"][0][i])
-    print("-"*10)
+
+    metadata = results["metadatas"][0][i]
+    score = results["distances"][0][i]
+
+    print("\n-----")
+    print("Chapter:", metadata["chapter"])
+    print("Description:", metadata["chapter_description"])
+    print("Devanagari:", metadata["devanagari"])
+    print("Translation:", metadata["translation"])
+    print("Purport:", metadata["purport"])
+    print("Score:", score)

@@ -8,7 +8,6 @@ model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
 client = weaviate.connect_to_local()
 print("Connected:", client.is_ready())
 
-# Create collection if not exists
 if not client.collections.exists("BhagavadGita"):
     client.collections.create(
         name="BhagavadGita",

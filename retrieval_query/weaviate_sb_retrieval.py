@@ -17,17 +17,23 @@ query_vector = model.encode(query).tolist()
 
 results = collection.query.near_vector(
     near_vector=query_vector,
-    limit=5
+    limit=5,
+    return_metadata = ["distance"]
 )
 
 for obj in results.objects:
 
     props = obj.properties
+    score = obj.metadata.distance
 
-    print("\n-----------------------------------")
+    print("\n-------")
     print("Canto:", props["canto"])
     print("Chapter:", props["chapter"])
     print("Text:", props["text"])
     print("Devanagari:", props["devanagari"])
     print("Translation:", props["translation"])
     print("Purport:", props["purport"])
+    print("Score:", score)
+
+client.close()
+
