@@ -1,7 +1,8 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import HumanMessage
+import os
 
-GOOGLE_API_KEY = "AIzaSyDBW102jGoxgSMCxmN9o1STWOXLTWJMxcw"
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 
 print("=" * 50)
