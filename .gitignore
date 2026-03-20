@@ -1,0 +1,16 @@
+<<<<<<< HEAD
+# Virtual environments
+/venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Databases
+*.db
+*.sqlite3
+
+# Chroma DB
+chroma_db/
+=======
+>>>>>>> parent of 46a11b4e (Apply gitignore properly)
