@@ -1,42 +1,41 @@
 import os
 from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.messages import HumanMessage
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=GOOGLE_API_KEY, temperature=0.3)
 
 context = """
-    There are undoubtedly different planetary systems for different persons. As stated in Bhagavad-gītā (14.18), ūrdhvaṁ 
-    gacchanti sattva-sthāḥ: persons in the mode of goodness can go to the upper planets. Those in the modes of darkness and 
-    passion, however, are not allowed to enter the higher planets. The word divam refers to the higher planetary system known as 
-    Svargaloka. Indra, King of the higher planetary system, has the power to push down any conditioned soul attempting to go from 
-    the lower to the higher planets without proper qualifications. The modern attempt to go to the moon is also an attempt by 
-    inferior men to go to Svargaloka by artificial, mechanical means. This attempt cannot be successful. From this statement of 
-    Indra it appears that anyone attempting to go to the higher planetary systems by mechanical means, which are here called māyā,
-    is condemned to go to the hellish planets in the lower portion of the universe. To go to the higher planetary system, one 
-    needs sufficient good qualities. A sinful person situated in the mode of ignorance and addicted to drinking, meat-eating and 
-    illicit sex will never enter the higher planets by mechanical means."""
+The opulences of the universal form of the Lord are described herein. It is said that His mouth is the generating center of all kinds of 
+voices, and its controlling deity is the fire demigod. And His skin and other six layers of bodily construction are the representative 
+generating centers of the seven kinds of Vedic hymns, like the Gāyatrī. Gāyatrī is the beginning of all Vedic mantras, and it is 
+explained in the first volume of Śrīmad-Bhāgavatam. Since the generating centers are the different parts of the universal form of the 
+Lord, and since the form of the Lord is transcendental to the material creation, it is to be understood that the voice, the tongue, the 
+skin, etc., suggest that the Lord in His transcendental form is not without them. The material voice, or the energy of taking in 
+foodstuff, is generated originally from the Lord; such actions are but perverted reflections of the original reservoirs — the 
+transcendental situation is not without spiritual variegatedness. In the spiritual world, all the perverted forms of material 
+variegatedness are fully represented in their original spiritual identity. The only difference is that material activities are 
+contaminated by the three modes of material nature, whereas the potencies in the spiritual world are all pure because they are engaged 
+in the unalloyed transcendental loving service of the Lord. In the spiritual world, the Lord is the sublime enjoyer of everything, and 
+the living entities there are all engaged in His transcendental loving service without any contamination of the modes of material nature.
+The activities in the spiritual world are without any of the difficulties of the material world, but there is no question of impersonal 
+voidness on the spiritual platform, as suggested by the impersonalists.
+"""
 
-query = "What does a sinful person do?"
+query = "What are the generating centers of the seven kinds of Vedic hymns according to the context?"
 
-filtered_docs = []
+prompt = f"""
+Answer the question ONLY using the context below.
+If the answer is not present, say "Not found in context".
 
-for c in context:
-    check_prompt = f"""
-    Query: {query}
-    Document: {c}
+Context:
+{context}
 
-    Is this relevant? Answer YES or NO.
-    """
-    res = llm.invoke(check_prompt)
-    
-    if "YES" in res.content.upper():
-        filtered_docs.append(c)
+Question:
+{query}
+"""
 
-context = "\n".join(filtered_docs)
+response = llm.invoke([HumanMessage(content=prompt)])
 
-final_prompt = f"{context}\n\nQuestion:{query}"
-
-answer = llm.invoke(final_prompt)
-
-print(answer.content)
+print(response.content)
