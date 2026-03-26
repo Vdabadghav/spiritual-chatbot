@@ -13,3 +13,5 @@ langchain-google-genai
 chainlit
 uvicorn
 fastapi
+langchain-community
+langchain-classic
