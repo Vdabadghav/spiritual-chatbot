@@ -36,4 +36,4 @@ Question:
 
 def get_answer(query: str):
     chain = get_rag_chain()
-    return chain(query)
+    return chain(query)   
