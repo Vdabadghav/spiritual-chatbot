@@ -14,4 +14,3 @@ chainlit
 uvicorn
 fastapi
 langchain-community
-langchain-classic
