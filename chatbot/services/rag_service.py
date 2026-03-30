@@ -1,39 +1,24 @@
-from langchain_core.prompts import ChatPromptTemplate
-from chatbot.core.llm import get_gemini_llm
-from chatbot.db.vectorstore import get_retriever
+from chatbot.services.retriever_chain import retriever_chain
+from chatbot.services.prompt import prompt
+from chatbot.core.llm import llm
 
-def get_rag_chain():
-    llm = get_gemini_llm()
-    retriever = get_retriever()
-
-    prompt = ChatPromptTemplate.from_template("""You are a spiritual assistant based ONLY on Bhagavad Gita and Srimad Bhagavatam.
-Answer in a calm and philosophical tone.
-
-Context:
-{context}
-
-Question:
-{input}
-""")
-
-    def format_docs(docs):
-        return "\n\n".join(doc.page_content for doc in docs)
-
-    def rag_pipeline(query):
-        docs = retriever.invoke(query)
-        context = format_docs(docs)
-
-        messages = prompt.invoke({
-            "context": context,
-            "input": query
-        })
-
-        response = llm.invoke(messages)
-
-        return response.content 
-
-    return rag_pipeline
+def format_docs(docs):
+    return "\n\n".join([
+        f"[{doc.metadata.get('source', 'unknown')}] {doc.page_content}"
+        for doc in docs
+    ])
 
 def get_answer(query: str):
-    chain = get_rag_chain()
-    return chain(query)   
+
+    docs = retriever_chain.invoke(query)
+
+    context = format_docs(docs)
+
+    messages = prompt.invoke({
+        "context": context,
+        "question": query
+    })
+
+    response = llm.invoke(messages)
+
+    return response.content
