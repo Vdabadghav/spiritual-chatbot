@@ -1,6 +1,9 @@
-from langchain_community.retrievers import MergerRetriever
-from chatbot.db.retrievers import gita_retriever, bhagavatam_retriever
+from chatbot.db.retrievers import DualRetriever
 
-retriever_chain = MergerRetriever(
-    retrievers=[gita_retriever, bhagavatam_retriever]
-)
+
+def get_retriever():
+    return DualRetriever(k=4)
+
+
+def format_docs(docs):
+    return "\n\n".join([doc.page_content for doc in docs])

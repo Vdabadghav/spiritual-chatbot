@@ -1,16 +1,22 @@
-from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import SentenceTransformerEmbeddings
+from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
 
-def get_vectorstore():
-    embedding_model = SentenceTransformerEmbeddings(
-        model_name="paraphrase-multilingual-MiniLM-L12-v2"
-    )
+EMBEDDING_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
 
-    return Chroma(
-        persist_directory="./chroma_db",
-        embedding_function=embedding_model
-    )
+_embedding = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
 
-def get_retriever():
-    vectorstore = get_vectorstore()
-    return vectorstore.as_retriever(search_kwargs={"k": 3})
+
+def get_embedding():
+    return _embedding
+
+_vectorstores = {}
+
+
+def get_vectorstore(collection_name: str):
+    if collection_name not in _vectorstores:
+        _vectorstores[collection_name] = Chroma(
+            collection_name=collection_name,
+            embedding_function=_embedding,
+            persist_directory="./chroma_db",
+        )
+    return _vectorstores[collection_name]
