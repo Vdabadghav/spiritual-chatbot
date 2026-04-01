@@ -10,17 +10,25 @@ def format_docs(docs):
     for doc in docs:
         metadata = doc.metadata or {}
 
-        source = metadata.get("source", "Unknown")
+        canto = metadata.get("canto")
+        if canto:
+            source = f"Srimad Bhagavatam (Canto {canto})"
+        else:
+            source = "Bhagavad Gita"
+
         chapter = metadata.get("chapter", "N/A")
-        verse = metadata.get("verse", "N/A")
-        section = metadata.get("section", "") 
+        translation = metadata.get("translation", "")
+        purport = metadata.get("purport", "")
+        devanagari = metadata.get("devanagari", "")
 
         text = doc.page_content.strip()
 
         formatted.append(
             f"Source: {source}\n"
-            f"Chapter: {chapter}, Verse: {verse}\n"
-            f"Section: {section}\n"
+            f"Chapter: {chapter}\n\n"
+            f"Sanskrit: {devanagari}\n\n"
+            f"Translation: {translation}\n\n"
+            f"Purport: {purport}\n\n"
             f"Content: {text}"
         )
 

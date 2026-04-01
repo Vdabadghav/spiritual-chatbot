@@ -1,16 +1,16 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_mistralai import ChatMistralAI
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
-_llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    google_api_key=os.getenv("GOOGLE_API_KEY"),
+_llm = ChatMistralAI(
+    model="mistral-small-latest",   # or "open-mistral-7b", "codestral-latest"
+    api_key=os.getenv("MISTRAL_API_KEY"),
     temperature=0.3,
 )
 
-def get_gemini_llm():
+def get_mistral_llm():
     return _llm
 
 
