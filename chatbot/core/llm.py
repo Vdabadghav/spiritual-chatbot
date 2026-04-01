@@ -1,5 +1,8 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 _llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
@@ -7,6 +10,7 @@ _llm = ChatGoogleGenerativeAI(
     temperature=0.3,
 )
 
-
 def get_gemini_llm():
     return _llm
+
+

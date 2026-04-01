@@ -13,4 +13,5 @@ langchain-google-genai
 chainlit
 uvicorn
 fastapi
-langchain-community
+langchain-chroma
+langchain-huggingface
