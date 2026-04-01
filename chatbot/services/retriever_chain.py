@@ -13,7 +13,7 @@ def format_docs(docs):
         source = metadata.get("source", "Unknown")
         chapter = metadata.get("chapter", "N/A")
         verse = metadata.get("verse", "N/A")
-        section = metadata.get("section", "")  # e.g., translation/purport
+        section = metadata.get("section", "") 
 
         text = doc.page_content.strip()
 
