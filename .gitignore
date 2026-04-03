@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Virtual environments
 /venv/
 
@@ -12,5 +11,7 @@ __pycache__/
 
 # Chroma DB
 chroma_db/
-=======
->>>>>>> parent of 46a11b4e (Apply gitignore properly)
+
+# Chainlit
+.chainlit/
+

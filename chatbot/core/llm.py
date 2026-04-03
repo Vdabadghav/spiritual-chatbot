@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 _llm = ChatMistralAI(
-    model="mistral-small-latest", 
+    model="mistral-small-latest",
     api_key=os.getenv("MISTRAL_API_KEY"),
     temperature=0.3,
 )

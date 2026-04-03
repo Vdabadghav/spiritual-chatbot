@@ -16,3 +16,5 @@ fastapi
 langchain-chroma
 langchain-huggingface
 langchain-mistralai
+httpx
+

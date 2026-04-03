@@ -6,7 +6,7 @@ from chatbot.db.vectorstore import get_vectorstore
 
 
 class DualRetriever(BaseRetriever):
-    k: int = 2
+    k: int = 4
 
     @property
     def gita_store(self):
