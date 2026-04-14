@@ -17,4 +17,7 @@ langchain-chroma
 langchain-huggingface
 langchain-mistralai
 httpx
+python-telegram-bot
+langchain-weaviate
+
 

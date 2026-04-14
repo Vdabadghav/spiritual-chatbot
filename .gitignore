@@ -15,3 +15,7 @@ chroma_db/
 # Chainlit
 .chainlit/
 
+#Environment variables
+.env
+.env.*
+
