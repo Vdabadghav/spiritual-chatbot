@@ -6,14 +6,14 @@ from chatbot.db.vectorstore import get_vectorstore
 
 
 class DualRetriever(BaseRetriever):
-    k: int = 2
+    k: int = 4
 
     @property
     def gita_store(self):
-        return get_vectorstore("BhagavadGita")
+        return get_vectorstore("bhagavad_gita")
     @property
     def bhagavatam_store(self):
-        return get_vectorstore("SrimadBhagavatam")
+        return get_vectorstore("srimad_bhagavatam")
 
     def _get_relevant_documents(self, query: str) -> List[Document]:
         gita_docs = self.gita_store.similarity_search(query, k=self.k)

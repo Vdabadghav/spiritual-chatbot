@@ -1,5 +1,4 @@
-import weaviate
-from langchain_weaviate import WeaviateVectorStore
+from langchain_chroma import Chroma
 from langchain_huggingface import HuggingFaceEmbeddings
 
 EMBEDDING_MODEL = "paraphrase-multilingual-MiniLM-L12-v2"
@@ -13,8 +12,6 @@ def get_embedding():
 
 _vectorstores = {}
 
-client = weaviate.connect_to_local()
-
 
 def get_vectorstore(collection_name: str):
     if collection_name not in _vectorstores:
@@ -22,8 +19,7 @@ def get_vectorstore(collection_name: str):
         if collection_name == "SrimadBhagavatam":
             text_key = "text"
 
-            attributes = [
-                "text",
+            metadata_fields = [
                 "translation",
                 "purport",
                 "canto",
@@ -33,8 +29,7 @@ def get_vectorstore(collection_name: str):
         elif collection_name == "BhagavadGita":
             text_key = "translation"
 
-            attributes = [
-                "translation",
+            metadata_fields = [
                 "purport",
                 "chapter",
                 "chapter_description"
@@ -42,14 +37,12 @@ def get_vectorstore(collection_name: str):
 
         else:
             text_key = "translation"
-            attributes = ["translation"]
+            metadata_fields = []
 
-        _vectorstores[collection_name] = WeaviateVectorStore(
-            client=client,
-            index_name=collection_name,
-            embedding=_embedding,
-            text_key=text_key,      
-            attributes=attributes,     
+        _vectorstores[collection_name] = Chroma(
+            collection_name=collection_name,
+            embedding_function=_embedding,
+            persist_directory=f"./chroma_db/{collection_name}"  # local storage
         )
 
     return _vectorstores[collection_name]
