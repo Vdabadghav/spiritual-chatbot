@@ -13,7 +13,7 @@ async def start():
 async def main(message: cl.Message):
     user_query = message.content
 
-    msg = cl.Message(content="Thinking..")
+    msg = cl.Message(content="Thinking...")
     await msg.send()
 
     try:
@@ -25,5 +25,5 @@ async def main(message: cl.Message):
         await msg.update()
 
     except Exception as e:
-        msg.content = f" Error: {str(e)}"
+        msg.content = f"Error: {str(e)}"
         await msg.update()
